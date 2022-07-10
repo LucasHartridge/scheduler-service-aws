@@ -1,0 +1,25 @@
+version: "3"
+
+services:
+  reporting-scheduler-aws:
+    container_name: scheduler-service-aws
+    image: localstack/localstack:0.14.0
+    ports:
+      - "4568:4568"
+    env_file: 
+      - .env
+    environment:
+      - DATA_DIR=/tmp/localstack/data
+      - DEBUG=1
+      - DOCKER_HOST=unix:///var/run/docker.sock
+      - EDGE_PORT=${LOCALSTACK_PORT}
+      - HOST_TMP_FOLDER=${PWD}/localstack_tmp
+      - LAMBDA_EXECUTOR=docker
+      - LAMBDA_REMOTE_DOCKER=false
+      - SERVICES=ses,lambda,s3
+      - LAMBDA_DOCKER_NETWORK=host
+      - LAMBDA_DOCKER_FLAGS=--add-host host.docker.internal:host-gateway
+    volumes:
+      - ./docker-entrypoint.sh:/docker-entrypoint-initaws.d/docker-entrypoint.sh
+      - /var/run/docker.sock:/var/run/docker.sock
+      - ${PWD}/localstack_tmp:/tmp/localstack
