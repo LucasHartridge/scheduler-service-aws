@@ -1,6 +1,6 @@
 include .env
 
-.PHONY: create build deploy-lambda-local up stop down reboot setup
+.PHONY: create build deploy-lambda-local down setup
 
 create: down build
 
@@ -14,17 +14,10 @@ deploy-lambda-local:
 	cp -r ./app lambda-local/deploy/;
 	cp ./handler.py lambda-local/deploy/;
 
-up:
-	@docker-compose up 
-
-stop:
-	@docker-compose stop 
-
 down:
-	@docker-compose down --volumes
+	@docker compose down --rmi all --volumes
+	@docker image prune --force
 	@rm -rf localstack_tmp 
-
-reboot: down up
 
 setup:
 	mkdir localstack_tmp
